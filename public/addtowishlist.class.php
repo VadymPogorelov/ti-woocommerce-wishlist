@@ -497,9 +497,14 @@ class TInvWL_Public_AddToWishlist {
 			}
 			if ( $lang ) {
 				if ( $lang_default ) {
-					$languages = sprintf( "'%s'", implode( "', '", array( $lang, $lang_default ) ) );
+					// Fix by ThemeREX: After the use of implode with the parameters $lang and $lang_default
+					//                  a condition is created that may allow attackers to add extra SQL statements to the query
+					// $languages = sprintf( "'%s'", implode( "', '", array( $lang, $lang_default ) ) );
+					// Fixed way:
+					$languages = "'" . esc_sql( $lang ) . "', '" . esc_sql( $lang_default ) . "'";
 				} else {
-					$languages = "'" . $lang . "'";
+					// Fix by ThemeREX: $lang is wrapped to esc_sql()
+					$languages = "'" . esc_sql( $lang ) . "'";
 				}
 
 				$sql .= "LEFT JOIN {$table_translations} tr ON
